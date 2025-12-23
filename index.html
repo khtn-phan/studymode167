@@ -130,29 +130,6 @@
       }
     }
 
-    // Ví dụ hàm saveSession được gọi đúng cú pháp
-    function saveSession(taskId, minutes) {
-      console.log("Saving session:", taskId, "Minutes:", minutes);
-      // Bạn có thể thêm logic lưu vào server hoặc localStorage ở đây
-    }
-
-    // Gọi thử saveSession với toán tử điều kiện ? :
-    function testSave() {
-      saveSession(
-        timerState.currentTaskId,
-        timerState.breakSec
-          ? Math.floor((timerState.breakSec + timerState.totalSec) / 60)
-          : 0
-      );
-    }
-
-    // Giả lập timerState để test
-    const timerState = {
-      currentTaskId: 1,
-      breakSec: 300,
-      totalSec: 1200
-    };
-
     updateTimer();
   </script>
 
