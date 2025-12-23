@@ -1,35 +1,790 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Study Mode 167</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0f4c81, #1fa2ff);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-    }
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 10px;
-    }
-    p {
-      font-size: 1.2rem;
-      opacity: 0.9;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Study Mode 167 — Focus Study</title>
+<style>
+  :root{
+    --blue-dark:#0f4c81;
+    --blue-main:#1fa2ff;
+    --blue-soft:#a6ddff;
+    --glass: rgba(255,255,255,0.08);
+    --glass-strong: rgba(255,255,255,0.12);
+    --muted: rgba(255,255,255,0.85);
+  }
+  *{box-sizing:border-box;font-family:Inter, Arial, sans-serif}
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,var(--blue-dark),var(--blue-main));
+    color:white;
+  }
+  .container{
+    width:100%;
+    max-width:1100px;
+    margin:24px;
+  }
+  header{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:18px;
+  }
+  .brand{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .logo{
+    width:56px;height:56px;border-radius:12px;
+    background:linear-gradient(135deg,#08325b,#1fa2ff);
+    display:flex;align-items:center;justify-content:center;font-weight:700;
+    box-shadow:0 6px 18px rgba(0,0,0,0.25);
+    font-size:18px;
+  }
+  h1{margin:0;font-size:20px}
+  .controls{display:flex;gap:10px;align-items:center}
+  button, .pill {
+    background:white;color:var(--blue-dark);border:none;padding:8px 12px;border-radius:10px;
+    cursor:pointer;font-weight:600;
+  }
+  button.secondary{background:transparent;border:1px solid rgba(255,255,255,0.12); color: white}
+  main{
+    display:grid;
+    grid-template-columns: 420px 1fr;
+    gap:18px;
+  }
+  /* Left - Timer */
+  .card{
+    background:var(--glass);
+    border-radius:14px;padding:16px;box-shadow:0 8px 26px rgba(0,0,0,0.25);
+  }
+  .timer-display{
+    display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;
+  }
+  .time {
+    font-size:64px;font-weight:800;letter-spacing:1px;
+  }
+  .sub {opacity:0.9}
+  .preset-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+  .preset-row button{min-width:86px}
+  .big-controls{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:12px;flex-wrap:wrap}
+  .small{padding:6px 10px;font-size:14px;border-radius:8px}
+  /* Focus box */
+  .focus-banner{margin-top:14px;padding:10px;border-radius:10px;background:rgba(0,0,0,0.22);text-align:center}
+  .focus-banner.active{border:1px solid var(--blue-soft);background:rgba(0,0,0,0.35)}
+  /* Right - Tasks & Dashboard */
+  .right-col{display:flex;flex-direction:column;gap:12px}
+  .task-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+  .task{
+    display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;background:rgba(255,255,255,0.03)
+  }
+  .task .left{display:flex;gap:8px;align-items:center}
+  input[type="text"], input[type="number"], select, textarea {
+    padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:white;
+    outline:none;min-width:0;
+  }
+  label{font-size:13px;opacity:0.95}
+  .footer-small{font-size:13px;opacity:0.85;text-align:center;margin-top:8px}
+  .dashboard{display:flex;gap:8px;flex-wrap:wrap}
+  .stat{
+    flex:1;min-width:140px;background:rgba(255,255,255,0.03);padding:12px;border-radius:10px;text-align:center
+  }
+  /* Modal */
+  .modal-back{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:60}
+  .modal{background:white;color:black;padding:18px;border-radius:12px;width:420px;max-width:92%}
+  .hidden{display:none}
+  /* responsive */
+  @media (max-width:980px){
+    main{grid-template-columns:1fr; padding-bottom:100px}
+    .container{padding:0 8px}
+    .time{font-size:48px}
+  }
+  a.link{color:var(--blue-soft);text-decoration:underline}
+  .top-right {display:flex;gap:8px;align-items:center}
+  .chip {background:rgba(255,255,255,0.06);padding:6px 10px;border-radius:999px}
+</style>
 </head>
 <body>
-  <div>
-    <h1>Study Mode 167</h1>
-    <p>Focus. Study. Improve.</p>
-  </div>
+<div class="container">
+  <header>
+    <div class="brand">
+      <div class="logo">SM</div>
+      <div>
+        <h1>Study Mode 167</h1>
+        <div style="font-size:13px;opacity:0.9">Focus. Study. Improve.</div>
+      </div>
+    </div>
+
+    <div class="controls top-right">
+      <div id="greeting" class="chip">Welcome</div>
+      <button id="btnLogin" class="small">Login</button>
+      <button id="btnSessions" class="small secondary">History</button>
+      <button id="btnSettings" class="small secondary">Settings</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- LEFT: Timer -->
+    <section class="card">
+      <div class="timer-display">
+        <div style="display:flex;gap:10px;align-items:center">
+          <div style="text-align:left">
+            <div style="font-size:14px;opacity:0.9">Current Task</div>
+            <div id="currentTaskTitle" style="font-weight:700">No task selected</div>
+          </div>
+          <div style="margin-left:auto">
+            <div style="font-size:12px;opacity:0.85">Session count</div>
+            <div id="sessionCount" style="font-weight:800;text-align:right">0</div>
+          </div>
+        </div>
+
+        <div class="time" id="timeDisplay">25:00</div>
+        <div class="sub" id="timerSubtitle">Pomodoro</div>
+
+        <div class="preset-row">
+          <button onclick="setPreset(25,5)">25 / 5</button>
+          <button onclick="setPreset(50,10)">50 / 10</button>
+          <button onclick="openCustom()">Custom</button>
+        </div>
+
+        <div class="big-controls">
+          <button id="startBtn" class="small">Start</button>
+          <button id="pauseBtn" class="small">Pause</button>
+          <button onclick="resetTimer()" class="small">Reset</button>
+          <button id="enterFocus" class="small secondary">Enter Focus Mode</button>
+        </div>
+
+        <div class="focus-banner" id="focusBanner">Focus Mode is OFF</div>
+
+        <div style="margin-top:12px;display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap">
+          <label style="display:flex;gap:8px;align-items:center">
+            <input type="checkbox" id="autoNext" /> Auto next session
+          </label>
+          <label style="display:flex;gap:8px;align-items:center">
+            <input type="checkbox" id="blockerToggle" /> Enable internal blocker during focus
+          </label>
+          <label style="display:flex;gap:8px;align-items:center">
+            <input type="checkbox" id="ambientToggle" /> Ambient sound
+          </label>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- RIGHT: Tasks & Dashboard -->
+    <aside class="right-col">
+      <div class="card">
+        <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+          <div style="font-weight:700">Tasks</div>
+          <div style="font-size:13px;opacity:0.9">Add a task and assign minutes / pomodoros</div>
+        </div>
+
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <input id="taskInput" type="text" placeholder="Task title e.g. 'IELTS Reading - Passage 2'" />
+          <input id="taskTime" type="number" placeholder="mins" style="width:90px" />
+          <button id="addTaskBtn">Add</button>
+        </div>
+
+        <div class="task-list" id="taskList" aria-live="polite"></div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-weight:700">Dashboard</div>
+          <div style="font-size:13px;opacity:0.9">Quick stats</div>
+        </div>
+
+        <div class="dashboard" style="margin-top:12px">
+          <div class="stat">
+            <div style="font-size:14px;opacity:0.9">Today Focus</div>
+            <div id="statToday" style="font-weight:800;font-size:20px">0m</div>
+          </div>
+          <div class="stat">
+            <div style="font-size:14px;opacity:0.9">Total Sessions</div>
+            <div id="statSessions" style="font-weight:800;font-size:20px">0</div>
+          </div>
+          <div class="stat">
+            <div style="font-size:14px;opacity:0.9">Streak (days)</div>
+            <div id="statStreak" style="font-weight:800;font-size:20px">0</div>
+          </div>
+        </div>
+        <div class="footer-small">Sessions are saved locally on this browser.</div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-weight:700">Blocklist (internal)</div>
+          <div style="font-size:13px;opacity:0.9">Block links inside app during focus</div>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <input id="blockInput" type="text" placeholder="example.com" />
+          <button id="addBlockBtn">Add</button>
+        </div>
+        <div id="blockList" style="margin-top:10px;display:flex;flex-direction:column;gap:6px"></div>
+        <div style="margin-top:8px;font-size:13px;opacity:0.85">Note: This internal blocker prevents links inside the site; it cannot block outside navigation (browser limitation).</div>
+      </div>
+
+    </aside>
+  </main>
+</div>
+
+<!-- Modal: Login / Sessions / Settings / Custom -->
+<div class="modal-back" id="modalBack">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<script>
+/* ---------- Storage keys & helpers ---------- */
+const KEY_USER = 'sm_user_v1';
+const KEY_TASKS = 'sm_tasks_v1';
+const KEY_SESS = 'sm_sessions_v1';
+const KEY_BL = 'sm_block_v1';
+const KEY_SETTINGS = 'sm_settings_v1';
+
+function load(key, fallback){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){return fallback} }
+function save(key, obj){ try{ localStorage.setItem(key, JSON.stringify(obj)); }catch(e){console.error('save failed',e)} }
+
+/* ---------- App State ---------- */
+let user = load(KEY_USER, null);
+let tasks = load(KEY_TASKS, []); // {id,title,mins,done}
+let sessions = load(KEY_SESS, []); // {id,taskId,duration,ts,focusScore}
+let blocklist = load(KEY_BL, []);
+let settings = load(KEY_SETTINGS, {autoNext:false,ambient:false,volume:0.6});
+let timerState = {
+  totalSec: 25*60,
+  breakSec: 5*60,
+  running: false,
+  inBreak:false,
+  intervalId: null,
+  sessionCount:0,
+  currentTaskId: null
+};
+
+/* ---------- DOM refs ---------- */
+const greeting = document.getElementById('greeting');
+const btnLogin = document.getElementById('btnLogin');
+const btnSessions = document.getElementById('btnSessions');
+const btnSettings = document.getElementById('btnSettings');
+
+const timeDisplay = document.getElementById('timeDisplay');
+const timerSubtitle = document.getElementById('timerSubtitle');
+const startBtn = document.getElementById('startBtn');
+const pauseBtn = document.getElementById('pauseBtn');
+const enterFocus = document.getElementById('enterFocus');
+const focusBanner = document.getElementById('focusBanner');
+
+const taskInput = document.getElementById('taskInput');
+const taskTime = document.getElementById('taskTime');
+const addTaskBtn = document.getElementById('addTaskBtn');
+const taskList = document.getElementById('taskList');
+
+const statToday = document.getElementById('statToday');
+const statSessions = document.getElementById('statSessions');
+const statStreak = document.getElementById('statStreak');
+
+const sessionCountEl = document.getElementById('sessionCount');
+const currentTaskTitle = document.getElementById('currentTaskTitle');
+
+const autoNextCb = document.getElementById('autoNext');
+const blockerToggle = document.getElementById('blockerToggle');
+const ambientToggle = document.getElementById('ambientToggle');
+
+const blockInput = document.getElementById('blockInput');
+const addBlockBtn = document.getElementById('addBlockBtn');
+const blockListEl = document.getElementById('blockList');
+
+const modalBack = document.getElementById('modalBack');
+const modalBox = document.getElementById('modalBox');
+
+/* ---------- Audio: simple beep and white noise generator ---------- */
+let audioCtx = null;
+function ensureAudio(){
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+function playBeep(){
+  try{
+    ensureAudio();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type='sine'; o.frequency.value=880;
+    g.gain.value = settings.volume || 0.6;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start();
+    o.stop(audioCtx.currentTime + 0.18);
+  }catch(e){ console.warn('beep failed', e) }
+}
+
+/* white noise node */
+let noiseNode = null, noiseGain = null;
+function startNoise(){
+  ensureAudio();
+  if(noiseNode) return;
+  const bufferSize = 2 * audioCtx.sampleRate;
+  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const output = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+  noiseNode = audioCtx.createBufferSource();
+  noiseNode.buffer = noiseBuffer;
+  noiseNode.loop = true;
+  noiseGain = audioCtx.createGain();
+  noiseGain.gain.value = settings.volume * 0.35;
+  noiseNode.connect(noiseGain);
+  noiseGain.connect(audioCtx.destination);
+  noiseNode.start(0);
+}
+function stopNoise(){
+  if(!noiseNode) return;
+  try{ noiseNode.stop(); }catch(e){}
+  noiseNode.disconnect();
+  noiseGain.disconnect();
+  noiseNode = null; noiseGain = null;
+}
+
+/* ---------- UI helpers ---------- */
+function showModal(html){
+  modalBox.innerHTML = html;
+  modalBack.style.display = 'flex';
+}
+function closeModal(){ modalBack.style.display='none'; modalBox.innerHTML=''; }
+
+/* ---------- Load / Save initial ---------- */
+function init(){
+  // settings
+  autoNextCb.checked = settings.autoNext || false;
+  ambientToggle.checked = settings.ambient || false;
+  greeting.textContent = user ? `Hi, ${user.name}` : 'Welcome';
+  btnLogin.textContent = user ? 'Profile' : 'Login';
+
+  renderTasks();
+  renderBlocklist();
+  refreshStats();
+  updateTimeDisplay();
+  updateSessionCount();
+}
+init();
+
+/* ---------- Login / Profile ---------- */
+btnLogin.addEventListener('click', ()=>{
+  if(user){
+    showProfile();
+  } else {
+    showLogin();
+  }
+});
+function showLogin(){
+  showModal(`
+    <h3>Login (local)</h3>
+    <p>Enter your name to save progress locally on this browser.</p>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <input id="nm" type="text" placeholder="Your name" />
+      <button id="doLogin">Save</button>
+    </div>
+    <div style="margin-top:8px;font-size:13px">Data saved only on this browser. Not uploaded anywhere.</div>
+  `);
+  document.getElementById('doLogin').onclick = ()=>{
+    const n = document.getElementById('nm').value.trim() || 'Student';
+    user = {name:n};
+    save(KEY_USER,user);
+    greeting.textContent = `Hi, ${user.name}`;
+    btnLogin.textContent = 'Profile';
+    closeModal();
+  };
+}
+function showProfile(){
+  showModal(`
+    <h3>Profile</h3>
+    <p>Name: <strong>${user.name}</strong></p>
+    <p><button id="logoutBtn">Logout</button> <button id="closeP">Close</button></p>
+  `);
+  document.getElementById('logoutBtn').onclick = ()=>{
+    if(confirm('Logout and clear saved name?')) {
+      user = null; localStorage.removeItem(KEY_USER); greeting.textContent='Welcome'; btnLogin.textContent='Login'; closeModal();
+    }
+  };
+  document.getElementById('closeP').onclick = closeModal;
+}
+
+/* ---------- Tasks ---------- */
+addTaskBtn.addEventListener('click', ()=>{
+  const title = taskInput.value.trim();
+  let mins = Number(taskTime.value) || 25;
+  if(!title) { alert('Enter a task title'); return; }
+  const id = 't_' + Date.now();
+  tasks.unshift({id,title,mins,done:false});
+  save(KEY_TASKS,tasks);
+  taskInput.value=''; taskTime.value='';
+  renderTasks();
+});
+function renderTasks(){
+  taskList.innerHTML = '';
+  tasks.forEach(t=>{
+    const el = document.createElement('div');
+    el.className='task';
+    el.innerHTML = `
+      <div class="left">
+        <input type="checkbox" ${t.done?'checked':''} data-id="${t.id}" class="task-check" />
+        <div style="min-width:0">
+          <div style="font-weight:700">${escapeHtml(t.title)}</div>
+          <div style="font-size:13px;opacity:0.85">${t.mins} min</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="small start-task-btn" data-id="${t.id}">Start</button>
+        <button class="small secondary del-task" data-id="${t.id}">Delete</button>
+      </div>
+    `;
+    taskList.appendChild(el);
+  });
+  // attach events
+  document.querySelectorAll('.task-check').forEach(ch=>{
+    ch.onchange = (e)=> {
+      const id = e.target.dataset.id;
+      const tt = tasks.find(x=>x.id===id);
+      if(tt){ tt.done = e.target.checked; save(KEY_TASKS,tasks); renderTasks(); }
+    };
+  });
+  document.querySelectorAll('.start-task-btn').forEach(b=>{
+    b.onclick = (e)=>{
+      const id = e.target.dataset.id;
+      startTaskById(id);
+    };
+  });
+  document.querySelectorAll('.del-task').forEach(b=>{
+    b.onclick = (e)=>{
+      const id = e.target.dataset.id;
+      if(confirm('Delete task?')) {
+        tasks = tasks.filter(x=>x.id!==id);
+        save(KEY_TASKS,tasks); renderTasks();
+      }
+    };
+  });
+}
+function startTaskById(id){
+  const t = tasks.find(x=>x.id===id);
+  if(!t) return;
+  timerState.currentTaskId = id;
+  currentTaskTitle.textContent = t.title;
+  setPreset(Math.ceil(t.mins), 5); // set session as task minutes, break 5 (approx)
+  // optionally start timer:
+  startTimer();
+}
+
+/* ---------- Timer core ---------- */
+function updateTimeDisplay(){
+  const mm = Math.floor(timerState.totalSec/60);
+  const ss = timerState.totalSec%60;
+  timeDisplay.textContent = String(mm).padStart(2,'0') + ':' + String(ss).padStart(2,'0');
+  timerSubtitle.textContent = timerState.inBreak ? 'Break' : 'Focus';
+}
+function setPreset(workMin, breakMin){
+  timerState.totalSec = workMin*60;
+  timerState.breakSec = breakMin*60;
+  timerState.inBreak = false;
+  updateTimeDisplay();
+  timerSubtitle.textContent = 'Pomodoro';
+}
+function openCustom(){
+  showModal(`
+    <h3>Custom Timer</h3>
+    <div style="display:flex;gap:8px">
+      <input id="cWork" type="number" placeholder="work minutes" />
+      <input id="cBreak" type="number" placeholder="break minutes" />
+      <button id="cApply">Apply</button>
+    </div>
+  `);
+  document.getElementById('cApply').onclick = ()=>{
+    const w = Number(document.getElementById('cWork').value) || 25;
+    const b = Number(document.getElementById('cBreak').value) || 5;
+    setPreset(w,b); closeModal();
+  };
+}
+startBtn.onclick = startTimer;
+pauseBtn.onclick = pauseTimer;
+
+function startTimer(){
+  if(timerState.running) return;
+  timerState.running = true;
+  if(!audioCtx) { /* allow audio after user gesture */ }
+  timerState.intervalId = setInterval(()=>{
+    if(timerState.totalSec > 0){
+      timerState.totalSec--;
+      updateTimeDisplay();
+    } else {
+      // session ended
+      playBeep();
+      // save session if it was a focus session
+      if(!timerState.inBreak){
+        // completed focus session
+        timerState.sessionCount++;
+        updateSessionCount();
+        saveSession(timerState.currentTaskId, (timerState.breakSec? (Math.floor((timerState.breakSec + timerState.totalSec)/60) : 0)));
+        // show rating
+        askFocusRating();
+      }
+      // switch to break or work
+      if(!timerState.inBreak){
+        timerState.inBreak = true;
+        timerState.totalSec = timerState.breakSec;
+        updateTimeDisplay();
+        focusBanner.textContent = 'On break — relax';
+        if(settings.ambient) stopNoise();
+      } else {
+        // break ended -> back to work
+        timerState.inBreak = false;
+        timerState.totalSec = (parseInt(timerState.totalSec) === 0) ? (25*60) : timerState.totalSec; // fallback
+        // if autoNext true: start next work automatically
+        if(settings.autoNext) {
+          // set new work duration as same (we keep same work length)
+          timerState.totalSec = timerState.totalSec || (25*60);
+          updateTimeDisplay();
+          focusBanner.textContent = 'Focus Mode is ON';
+          if(settings.ambient) startNoise();
+        } else {
+          pauseTimer(); // stop after break
+          focusBanner.textContent = 'Focus Mode is ON (paused)';
+        }
+      }
+      // update stats
+      refreshStats();
+    }
+  },1000);
+  focusBanner.textContent = timerState.inBreak ? 'On break' : 'Focus Mode is ON';
+  if(settings.ambient) startNoise();
+}
+function pauseTimer(){
+  clearInterval(timerState.intervalId);
+  timerState.intervalId = null;
+  timerState.running = false;
+  if(noiseNode) stopNoise();
+  focusBanner.textContent = 'Focus Mode is OFF (paused)';
+}
+function resetTimer(){
+  pauseTimer();
+  timerState.totalSec = 25*60;
+  timerState.inBreak = false;
+  updateTimeDisplay();
+  focusBanner.textContent = 'Focus Mode is OFF';
+}
+
+/* ---------- Session save / rating ---------- */
+function saveSession(taskId, dummyDuration){
+  // we save the focus time run (approx: original work length or elapsed)
+  const now = Date.now();
+  const focusMinutes = Math.round(( (timerState.breakSec?0:0) )) || Math.round(( ( (timerState.inBreak? timerState.breakSec : timerState.totalSec) ) )/60);
+  // better: compute by session length stored via sessionCount; but here store a record with timestamp and workMinutes default
+  const rec = { id:'s_'+now, taskId: taskId||null, durationMin: Math.round((timerState.inBreak? (timerState.breakSec/60) : ((timerState.breakSec? (timerState.breakSec/60):25) ))), ts: now, focusScore: null };
+  sessions.unshift(rec);
+  save(KEY_SESS, sessions);
+  refreshStats();
+}
+
+function askFocusRating(){
+  showModal(`
+    <h3>Rate your focus</h3>
+    <p>How focused were you this session? (1 = distracted, 5 = fully focused)</p>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="small score" data-score="1">1</button>
+      <button class="small score" data-score="2">2</button>
+      <button class="small score" data-score="3">3</button>
+      <button class="small score" data-score="4">4</button>
+      <button class="small score" data-score="5">5</button>
+    </div>
+    <div style="margin-top:10px"><button id="skipRate" class="small secondary">Skip</button></div>
+  `);
+  document.querySelectorAll('.score').forEach(b=>{
+    b.onclick = ()=>{
+      const sc = Number(b.dataset.score);
+      if(sessions.length>0){
+        sessions[0].focusScore = sc;
+        save(KEY_SESS,sessions);
+      }
+      closeModal();
+    };
+  });
+  document.getElementById('skipRate').onclick = ()=>{ closeModal(); };
+}
+
+/* ---------- Sessions modal & stats ---------- */
+btnSessions.onclick = ()=>{ showSessionsModal(); };
+function showSessionsModal(){
+  let html = `<h3>Session History</h3><div style="max-height:400px;overflow:auto">`;
+  if(sessions.length===0) html += '<div style="opacity:0.8">No sessions yet</div>';
+  sessions.forEach(s=>{
+    const t = tasks.find(x=>x.id===s.taskId);
+    const d = new Date(s.ts);
+    html += `<div style="padding:8px;border-bottom:1px solid #eee;display:flex;justify-content:space-between">
+      <div style="min-width:0">
+        <div style="font-weight:700">${t?escapeHtml(t.title):'No task'}</div>
+        <div style="font-size:13px;opacity:0.8">${d.toLocaleString()}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-weight:800">${s.durationMin||25}m</div>
+        <div style="font-size:13px;opacity:0.85">Score: ${s.focusScore||'-'}</div>
+      </div>
+    </div>`;
+  });
+  html += `</div><div style="margin-top:8px"><button id="clearSess" class="small secondary">Clear All</button> <button id="closeSess" class="small">Close</button></div>`;
+  showModal(html);
+  document.getElementById('closeSess').onclick = closeModal;
+  document.getElementById('clearSess').onclick = ()=>{
+    if(confirm('Clear all session history?')){
+      sessions = []; save(KEY_SESS,sessions); closeModal(); refreshStats();
+    }
+  };
+}
+
+function refreshStats(){
+  // today total minutes
+  const startOfToday = new Date(); startOfToday.setHours(0,0,0,0);
+  const todayMin = sessions.filter(s=>s.ts >= startOfToday.getTime()).reduce((a,b)=>a+(b.durationMin||0),0);
+  statToday.textContent = todayMin + 'm';
+  statSessions.textContent = sessions.length;
+  // streak: consecutive days with sessions
+  const days = Array.from(new Set(sessions.map(s=> (new Date(s.ts)).toDateString() )));
+  days.sort(); // ascending (strings)
+  // compute streak ending today
+  let streak=0;
+  let cur = new Date(); cur.setHours(0,0,0,0);
+  while(true){
+    const ds = new Date(cur).toDateString();
+    if(days.includes(ds)){ streak++; cur.setDate(cur.getDate()-1); } else break;
+  }
+  statStreak.textContent = streak;
+}
+
+/* ---------- Blocklist UI ---------- */
+addBlockBtn.onclick = ()=>{
+  const v = blockInput.value.trim().toLowerCase();
+  if(!v) return; if(blocklist.includes(v)) return;
+  blocklist.push(v); save(KEY_BL,blocklist); blockInput.value=''; renderBlocklist();
+};
+function renderBlocklist(){
+  blockListEl.innerHTML = '';
+  blocklist.forEach(domain=>{
+    const div = document.createElement('div');
+    div.style.display='flex';div.style.justifyContent='space-between';div.style.alignItems='center';
+    div.innerHTML = `<div style="opacity:0.95">${escapeHtml(domain)}</div><div><button class="small del-block" data-d="${escapeHtml(domain)}">Remove</button></div>`;
+    blockListEl.appendChild(div);
+  });
+  document.querySelectorAll('.del-block').forEach(b=>{
+    b.onclick = ()=> {
+      const d = b.dataset.d;
+      blocklist = blocklist.filter(x=>x!==d);
+      save(KEY_BL,blocklist); renderBlocklist();
+    };
+  });
+}
+
+/* ---------- Focus Mode (full-screen + UI hide) ---------- */
+enterFocus.onclick = async ()=>{
+  // if not logged in, ask
+  if(!user && !confirm('You are not logged in. Continue as Guest?')) return;
+  // attempt full-screen
+  const container = document.documentElement;
+  try{
+    if(container.requestFullscreen) await container.requestFullscreen();
+  }catch(e){ /* ignore */ }
+
+  focusBanner.classList.add('active');
+  focusBanner.textContent = 'Focus Mode is ON — Do not open distracting sites';
+  document.body.style.filter = 'none';
+  // hide header and right-col for minimal UI
+  document.querySelector('header').style.display='none';
+  document.querySelector('aside').style.display='none';
+  // enlarge timer container
+  document.querySelector('.container').style.maxWidth='720px';
+  document.querySelector('.container').style.margin='0 auto';
+  // set a visual cue
+  document.body.style.background = 'linear-gradient(180deg,#06263f,#0f4c81)';
+
+  // start timer automatically if not running
+  if(!timerState.running) startTimer();
+
+  // if ambient setting true, start noise
+  if(settings.ambient) startNoise();
+};
+
+/* Exit focus: if fullscreen change event or user presses exit, restore UI */
+document.addEventListener('fullscreenchange', ()=>{
+  if(!document.fullscreenElement){
+    // exit
+    focusBanner.classList.remove('active');
+    focusBanner.textContent = 'Focus Mode is OFF';
+    document.querySelector('header').style.display='';
+    document.querySelector('aside').style.display='';
+    document.querySelector('.container').style.maxWidth='';
+    // stop ambient
+    stopNoise();
+  }
+});
+
+/* Intercept clicks on links inside the app to enforce internal blocklist when blocker is on */
+document.addEventListener('click',(e)=>{
+  const el = e.target.closest('a');
+  if(!el) return;
+  if(!blockerToggle.checked) return;
+  try{
+    const url = new URL(el.href);
+    const host = url.hostname.replace('www.','').toLowerCase();
+    if(blocklist.some(d=>host.includes(d))) {
+      e.preventDefault();
+      alert('This link is blocked during Focus Mode.');
+      return false;
+    }
+  }catch(err){}
+});
+
+/* ---------- Settings ---------- */
+btnSettings.onclick = ()=>{
+  showModal(`
+    <h3>Settings</h3>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <label>Auto-next sessions <input type="checkbox" id="sAuto" ${settings.autoNext? 'checked':''}></label>
+      <label>Ambient sound <input type="checkbox" id="sAmb" ${settings.ambient? 'checked':''}></label>
+      <label>Volume <input id="sVol" type="range" min="0" max="1" step="0.05" value="${settings.volume||0.6}"></label>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+        <button id="saveSettings" class="small">Save</button>
+        <button id="closeS" class="small secondary">Close</button>
+      </div>
+    </div>
+  `);
+  document.getElementById('closeS').onclick = closeModal;
+  document.getElementById('saveSettings').onclick = ()=>{
+    settings.autoNext = document.getElementById('sAuto').checked;
+    settings.ambient = document.getElementById('sAmb').checked;
+    settings.volume = Number(document.getElementById('sVol').value);
+    save(KEY_SETTINGS, settings);
+    closeModal();
+    alert('Settings saved');
+  };
+};
+
+/* ---------- Utility ---------- */
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function updateSessionCount(){ sessionCountEl.textContent = timerState.sessionCount; }
+function updateCurrentTaskUI(){ const t = tasks.find(x=>x.id===timerState.currentTaskId); currentTaskTitle.textContent = t? t.title : 'No task selected'; }
+
+/* init small bindings */
+document.getElementById('autoNext').onchange = (e)=>{ settings.autoNext = e.target.checked; save(KEY_SETTINGS,settings); };
+document.getElementById('ambientToggle').onchange = (e)=>{ settings.ambient = e.target.checked; save(KEY_SETTINGS,settings); if(!e.target.checked) stopNoise(); };
+
+addEventListener('visibilitychange', ()=>{
+  // when user switches tab, we don't stop timer; but you can implement auto-pause here if desired
+});
+
+/* initial show */
+updateCurrentTaskUI();
+updateTimeDisplay();
+renderTasks();
+renderBlocklist();
+refreshStats();
+</script>
 </body>
 </html>
