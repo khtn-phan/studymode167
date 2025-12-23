@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Study Mode 167</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       margin: 0;
@@ -15,6 +16,7 @@
       font-family: Arial, Helvetica, sans-serif;
       color: white;
     }
+
     .box {
       width: 320px;
       background: rgba(255,255,255,0.15);
@@ -22,8 +24,16 @@
       border-radius: 16px;
       text-align: center;
     }
-    h1 { margin-top: 0; }
-    #timer { font-size: 56px; margin: 20px 0; }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    #timer {
+      font-size: 56px;
+      margin: 20px 0;
+    }
+
     button {
       padding: 10px 14px;
       margin: 5px;
@@ -32,39 +42,57 @@
       font-size: 16px;
       cursor: pointer;
     }
-    .primary { background: white; color: #0f4c81; font-weight: bold; }
+
+    .primary {
+      background: white;
+      color: #0f4c81;
+      font-weight: bold;
+    }
+
     .focus {
       margin-top: 15px;
       padding: 10px;
       border-radius: 8px;
       background: rgba(0,0,0,0.3);
     }
+
     .focus.active {
       background: rgba(0,0,0,0.6);
       border: 1px solid #a6ddff;
     }
   </style>
 </head>
+
 <body>
+
   <div class="box">
     <h1>Study Mode 167</h1>
+
     <div id="timer">25:00</div>
+
     <button class="primary" onclick="startTimer()">Start</button>
     <button onclick="pauseTimer()">Pause</button>
     <button onclick="resetTimer()">Reset</button>
-    <div class="focus" id="focusBox">Focus Mode: OFF</div>
+
+    <div class="focus" id="focusBox">
+      Focus Mode: OFF
+    </div>
+
     <button onclick="toggleFocus()">Toggle Focus</button>
   </div>
+
   <script>
     let seconds = 25 * 60;
     let interval = null;
     let focus = false;
+
     function updateTimer() {
       const m = Math.floor(seconds / 60);
       const s = seconds % 60;
       document.getElementById("timer").textContent =
         String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
     }
+
     function startTimer() {
       if (interval) return;
       interval = setInterval(() => {
@@ -78,15 +106,18 @@
         }
       }, 1000);
     }
+
     function pauseTimer() {
       clearInterval(interval);
       interval = null;
     }
+
     function resetTimer() {
       pauseTimer();
       seconds = 25 * 60;
       updateTimer();
     }
+
     function toggleFocus() {
       focus = !focus;
       const box = document.getElementById("focusBox");
@@ -98,7 +129,32 @@
         box.classList.remove("active");
       }
     }
+
+    // Ví dụ hàm saveSession được gọi đúng cú pháp
+    function saveSession(taskId, minutes) {
+      console.log("Saving session:", taskId, "Minutes:", minutes);
+      // Bạn có thể thêm logic lưu vào server hoặc localStorage ở đây
+    }
+
+    // Gọi thử saveSession với toán tử điều kiện ? :
+    function testSave() {
+      saveSession(
+        timerState.currentTaskId,
+        timerState.breakSec
+          ? Math.floor((timerState.breakSec + timerState.totalSec) / 60)
+          : 0
+      );
+    }
+
+    // Giả lập timerState để test
+    const timerState = {
+      currentTaskId: 1,
+      breakSec: 300,
+      totalSec: 1200
+    };
+
     updateTimer();
   </script>
+
 </body>
 </html>
